@@ -1,33 +1,35 @@
-const express = require('express')
+const express = require('express');
 const morgan = require('morgan');
 const path = require('path');
-const app = express()
-const port = 3000
-    //--------------------------------------------//
+const app = express();
+const port = 3000;
 
-app.use(express.static(path.join(__dirname, 'public')))
+const route = require('./routes');
+//--------------------------------------------//
 
-const exphbs = require('express-handlebars')
-const hbs = exphbs.create({ extname: '.hbs' })
-    // TEMPLATE ENGINE
-app.engine('hbs', hbs.engine)
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(
+    express.urlencoded({
+        extended: true,
+    }),
+); //Gửi data từ form
+app.use(express.json()); //Gửi data từ code jS
+
+const exphbs = require('express-handlebars');
+const { log } = require('console');
+const hbs = exphbs.create({ extname: '.hbs' });
+// TEMPLATE ENGINE
+app.engine('hbs', hbs.engine);
 app.set('view engine', 'hbs');
-app.set("views", path.join(__dirname, 'resources\\views')); 
+app.set('views', path.join(__dirname, 'resources\\views'));
 
-
-//console.log('PATH: ', path.join(__dirname, 'resources/views')) //xem đường dẫn
-
-//
 //HTTP logger
-app.use(morgan('combined'));
+// app.use(morgan('combined'));
 
-app.get('/', (req, res) => {
-    res.render('home')
-})
-app.get('/news', (req, res) => {
-  res.render('news')
-})
+// Routes init
+            route(app);
 
-app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`)
-})
+                app.listen(port, () => {
+    console.log(`Example app listening at http://localhost:${port}`);
+});
